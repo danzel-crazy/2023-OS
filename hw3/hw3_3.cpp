@@ -40,7 +40,8 @@ int main(){
     queue <int> current;
     current.push(0);
     List[0].in_queue = true;
-    
+    queue <int> fcfs;
+    int last = -1;
     while (count < num_process){
         if (!current.empty()){
             int id = current.front();
@@ -64,21 +65,49 @@ int main(){
                         List[i].in_queue = true;
                     }
                 }
-                current.push(id);
+                fcfs.push(id);
             }
+            // cout << time << " " << List[id].pid << " " << List[id].burst_time << endl;
             
+        }
+        else if(!fcfs.empty()){
+            int id = fcfs.front();
+            List[id].burst_time -= 1;
+            if (last != id){
+                List[id].wait_time += time - List[id].arrival_time;
+                last = id;
+            }
+            time += 1;
+            // cout << time << " " << List[id].pid << " " << List[id].burst_time << endl;
+            for(int i = 0; i < num_process; i++){
+                if (List[i].arrival_time <= time && !List[i].in_queue && List[i].finish == false){
+                    current.push(i);
+                    List[i].in_queue = true;
+                    last = -1;
+                    List[id].arrival_time = time;
+                    fcfs.pop();
+                    fcfs.push(id);
+                }
+            }
+
+            if(List[id].burst_time == 0){
+                List[id].turnaround_time = time - tt[id];
+                List[id].finish = true;
+                fcfs.pop();
+                count += 1;
+            }
         }
     }
     
     int total_w= 0, total_t = 0; 
-    
     for (int i = 0; i < num_process; i++){
         total_w += List[i].wait_time;
         total_t += List[i].turnaround_time;
         cout << List[i].wait_time << " " << List[i].turnaround_time << "\n";
     }
 
-    cout << total_w << " " << total_t << endl; 
+    cout << total_w << endl;
+    cout << total_t << endl; 
 
     return 0;
 }

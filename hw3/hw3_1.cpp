@@ -95,7 +95,8 @@ int main(){
         cout << List[i].wait_time << " " << List[i].turnaround_time << "\n";
     }
 
-    cout << total_w << " " << total_t << endl; 
+    cout << total_w << endl;
+    cout << total_t << endl; 
 
     return 0;
 }
